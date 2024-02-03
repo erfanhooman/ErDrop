@@ -1,0 +1,13 @@
+Module:
+  choose_file_class: TkinterFileChooser
+  choose_file_module: TkinterFileChoose
+  discover_receiver_class: DefaultDiscoveringImplementation
+  discover_receiver_module: DefaultDiscoveringImplementation
+  sending_file_class: DefaultSendingFileImplementation
+  sending_file_module: DefaultSendingFileImplementation
+  user_interface_module: TkinterGUI
+  user_interface_class: GUIHandler
+Settings:
+  discovery_port: 5000
+  discovery_timeout: 1.0
+  send_port: 4843
