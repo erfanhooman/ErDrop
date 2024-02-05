@@ -9,8 +9,11 @@ Module:
     discover_receiver_module: DefaultDiscoveringImplementation
     sending_file_class: DefaultSendingFileImplementation
     sending_file_module: DefaultSendingFileImplementation
-    user_interface_class: GUIHandler
-    user_interface_module: TkinterGUI
+#    user_interface_class: GUIHandler
+#    user_interface_module: TkinterGUI
+    user_interface_class: QtUIHandler
+    user_interface_module: QtGUI
+
 Settings:
   Receiver:
     name: fedora

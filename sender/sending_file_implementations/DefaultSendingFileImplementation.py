@@ -10,15 +10,13 @@ from twisted.web import resource, server
 
 from sender.sending_file_implementations.SendingFIle import ServerImplementationBase
 
-# TODO: increase the security of url with loging the reciever ip and check the reciever ip
-# TODO: ssh key the file when you are sending the file - end to end (set ssl) *
-
 
 class FileServer(resource.Resource):
     isLeaf = True
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, progress_bar):
         self.file_path = file_path
+        self.progress_bar = progress_bar
 
     def render_GET(self, request):
         file_path = os.path.join(self.file_path)
@@ -49,6 +47,7 @@ class FileServer(resource.Resource):
                     finish_request(None)
 
             total_size = os.path.getsize(file_path)
+
             pbar = tqdm(total=total_size, desc=f"Uploading {file_path.split('/')[-1]}")
 
             reactor.callLater(0, read_and_send)
@@ -71,7 +70,7 @@ class DefaultSendingFileImplementation(ServerImplementationBase):
         self.server = None
 
     def server_implement(self, filepath: str, port: int):
-        site = server.Site(FileServer(file_path=filepath))
+        site = server.Site(FileServer(file_path=filepath, progress_bar=None))
         reactor.listenTCP(port, site, interface='0.0.0.0')
         reactor.run(installSignalHandlers=False)
 
@@ -96,9 +95,8 @@ class DefaultSendingFileImplementation(ServerImplementationBase):
 
         try:
             sender_socket.connect((receiver['ip'], receiver_port))
-
             authentication_token = secrets.token_urlsafe(16)
-            url = f"http://{server}:{self.send_port}|{self.file_name}"
+            url = f"http://{server}:{self.send_port}|{self.file_name}|{receiver['ip']}"
             sender_socket.send(url.encode('utf-8'))
             status = sender_socket.recv(1024).decode('utf-8')
             if status == "1":

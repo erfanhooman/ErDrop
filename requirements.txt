@@ -10,6 +10,9 @@ idna==3.6
 incremental==22.10.0
 pycparser==2.21
 pyOpenSSL==24.0.0
+PyQt6==6.6.1
+PyQt6-Qt6==6.6.1
+PyQt6-sip==13.6.0
 PyYAML==6.0.1
 requests==2.31.0
 six==1.16.0

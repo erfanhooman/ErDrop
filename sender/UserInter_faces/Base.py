@@ -11,28 +11,31 @@ class UIHandlerBase(ABC):
         3. send the file to the user after choosing the receiver by the user
     """
     @abstractmethod
-    def __init__(self, Sender):
+    def __init__(self, *args, **kwargs):
         """
         To do call the three essential method and other method
         :param Sender: the class of Sender for finding and connecting and sending file to receivers
         """
-        self.Sender = Sender
+        raise NotImplemented
 
     @abstractmethod
-    def choose_file(self):
+    def choose_file(self, *args, **kwargs):
         """
         choose the file method , the function that ask for the file path
         :return: tuple of : name, filepath
         """
+        raise NotImplemented
 
     @abstractmethod
-    def select_and_send(self, event):
+    def select_and_send(self, *args, **kwargs):
         """
         select the user and send the file to it
         """
+        raise NotImplemented
 
     @abstractmethod
-    def window_refresh(self):
+    def window_refresh(self, *args, **kwargs):
         """
         constantly refresh the page and show the newest receivers
         """
+        raise NotImplemented

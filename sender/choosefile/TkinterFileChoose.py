@@ -11,7 +11,6 @@ class TkinterFileChooser(ChooseFileBase):
         root.withdraw()
 
         filepath = filedialog.askopenfilename(title="Choose a file")
-        print(filepath)
         if filepath is None:
             sys.exit()
         filename = filepath.split('/')[-1]

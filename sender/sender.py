@@ -78,10 +78,10 @@ class Sender:
         self.sending_server.connect_and_send(receiver_ip, receiver_port, HOST)
 
 
-def UIHandler():
+def UIHandler(parent):
     """
     UI Handler
     """
     DynamicClass = dynamic_import('UserInter_faces',
                                   UI_MODULE, UI_CLASS)
-    DynamicClass(Sender, DISCOVERY_PORT)
+    DynamicClass(parent, Sender, DISCOVERY_PORT)

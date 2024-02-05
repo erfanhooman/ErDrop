@@ -1,27 +1,39 @@
 import sys
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
 
 from sender.sender import UIHandler
 from receiver.receiver import Receiver
 
 
-def run_sender():
-    print("Running sender.py")
-    UIHandler()
+class MyWindow(QWidget):
+    def __init__(self):
+        super().__init__()
 
+        self.setWindowTitle("ErDrop")
+        self.setGeometry(100, 100, 400, 200)
 
-def run_receiver():
-    print("Running receiver.py")
-    Receiver().start_server()
+        self.sender_button = QPushButton("Sender", self)
+        self.receiver_button = QPushButton("Receiver", self)
+
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.sender_button)
+        layout.addWidget(self.receiver_button)
+
+        self.sender_button.clicked.connect(self.create_sender_instance)
+        self.receiver_button.clicked.connect(self.create_receiver_instance)
+
+    def create_sender_instance(self):
+        sender = UIHandler(self)
+        self.close()
+
+    def create_receiver_instance(self):
+        self.close()
+        r = Receiver()
+        r.start_server()
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python main.py [sender|receiver]")
-    else:
-        option = sys.argv[1]
-        if option == "sender":
-            run_sender()
-        elif option == "receiver":
-            run_receiver()
-        else:
-            print("Invalid option. Use 'sender' or 'receiver'.")
+    app = QApplication(sys.argv)
+    window = MyWindow()
+    window.show()
+    sys.exit(app.exec())
