@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class ServerImplementationBase(ABC):
     @abstractmethod
-    def __init__(self, file_path: str, send_port: int, filename: str):
+    def __init__(self, *args, **kwargs):
         """
         - Server Implementation to run server and put the file on it
         :param file_path: the location of file
@@ -13,7 +13,7 @@ class ServerImplementationBase(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def server_implement(self, directory: str, port: int):
+    def server_implement(self, *args, **kwargs):
         """
         - Start a server to share a file
         :param directory: the location of file
@@ -22,14 +22,14 @@ class ServerImplementationBase(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def stop_server(self):
+    def stop_server(self, *args, **kwargs):
         """
         - close the server at the end of the program
         """
         raise NotImplementedError
 
     @abstractmethod
-    def connect_and_send(self, receiver: dict, receiver_port: int, server: str):
+    def connect_and_send(self, *args, **kwargs):
         """
         connect and send file to receiver
         :param receiver: dict of receiver items

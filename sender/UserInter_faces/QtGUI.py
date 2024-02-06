@@ -5,20 +5,33 @@ from PyQt6.QtCore import QTimer
 
 class QtUIHandler:
     def __init__(self, parent, Sender, port):
+        self.parent = parent
+        self.Sender = Sender
+        self.port = port
+        self.setupUI()
+
+    def setupUI(self):
         receivers_list_window = ReceiversListWindow()
-        sender = SenderTest(parent, Sender, receivers_list_window, port)
+        progress_bar = Q.QProgressBar()
+        sender = SenderTest(self.parent, self.Sender, receivers_list_window, self.port, progress_bar)
         sender.show_receivers_list(receivers_list_window)
 
 
+        layout = Q.QVBoxLayout()
+        layout.addWidget(progress_bar)
+
+        self.parent.setLayout(layout)
+
+
 class SenderTest(UIHandlerBase):
-    def __init__(self, parent, Sender, receivers_list_window, port):
+    def __init__(self, parent, Sender, receivers_list_window, port, ui):
         self.port = port
         self.receivers_list_window = receivers_list_window
         self.parent = parent
 
         path, name = self.choose_file()
         if path and name:
-            self.sender = Sender(path, name)
+            self.sender = Sender(path, name, ui)
 
             self.timer = QTimer(self.parent)
             self.timer.timeout.connect(lambda: self.window_refresh(receivers_list_window.list_widget))
@@ -60,7 +73,6 @@ class SenderTest(UIHandlerBase):
     def select_and_send(self, item):
         receiver_name = item.text()
         if receiver_name in self.sender.receivers:
-            Q.QMessageBox.information(self.receivers_list_window, f"Sending File to {receiver_name}", "")
             self.sender.connect_to_receiver(self.sender.receivers[receiver_name], self.port)
             self.sender.end_discovering()
         else:
@@ -77,3 +89,15 @@ class ReceiversListWindow(Q.QWidget):
         self.list_widget = Q.QListWidget(self)
         layout = Q.QVBoxLayout(self)
         layout.addWidget(self.list_widget)
+
+
+class ProgressWindow(Q.QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Progress Window")
+        self.progress_bar = Q.QProgressBar()
+        layout = Q.QVBoxLayout()
+        layout.addWidget(self.progress_bar)
+        central_widget = Q.QWidget()
+        central_widget.setLayout(layout)
+        self.setCentralWidget(central_widget)

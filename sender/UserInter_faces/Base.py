@@ -16,7 +16,7 @@ class UIHandlerBase(ABC):
         To do call the three essential method and other method
         :param Sender: the class of Sender for finding and connecting and sending file to receivers
         """
-        raise NotImplemented
+        raise NotImplementedError
 
     @abstractmethod
     def choose_file(self, *args, **kwargs):
@@ -24,18 +24,18 @@ class UIHandlerBase(ABC):
         choose the file method , the function that ask for the file path
         :return: tuple of : name, filepath
         """
-        raise NotImplemented
+        raise NotImplementedError
 
     @abstractmethod
     def select_and_send(self, *args, **kwargs):
         """
         select the user and send the file to it
         """
-        raise NotImplemented
+        raise NotImplementedError
 
     @abstractmethod
     def window_refresh(self, *args, **kwargs):
         """
         constantly refresh the page and show the newest receivers
         """
-        raise NotImplemented
+        raise NotImplementedError

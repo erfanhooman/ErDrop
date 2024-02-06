@@ -32,6 +32,8 @@ class MyWindow(QWidget):
         r.start_server()
 
 
+# TODO: delete the print statements or put it as info or Error Pop up in GUI
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MyWindow()

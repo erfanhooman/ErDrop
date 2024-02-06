@@ -3,6 +3,10 @@ import sys
 import socket
 import secrets
 import threading
+
+from OpenSSL import crypto
+from OpenSSL.crypto import PKey
+from cryptography import x509
 from tqdm import tqdm
 
 from twisted.internet import reactor, ssl
@@ -11,6 +15,7 @@ from twisted.web import resource, server
 from sender.sending_file_implementations.SendingFIle import ServerImplementationBase
 
 
+# TODO: put the progress bar in the UI of the program
 class FileServer(resource.Resource):
     isLeaf = True
 
@@ -27,10 +32,10 @@ class FileServer(resource.Resource):
 
             def send_chunk(data):
                 request.write(data)
-                pbar.update(len(data))
+                self.progress_bar.setValue(self.progress_bar.value() + len(data))
+                reactor.callLater(0, read_and_send)
 
             def finish_request(_):
-                pbar.close()
                 request.finish()
 
             def error_occurred(failure):
@@ -41,16 +46,18 @@ class FileServer(resource.Resource):
                 data = file.read(4096)
                 if data:
                     send_chunk(data)
-                    reactor.callLater(0, read_and_send)
+                    # reactor.callLater(0, read_and_send)
                 else:
                     file.close()
                     finish_request(None)
 
             total_size = os.path.getsize(file_path)
 
-            pbar = tqdm(total=total_size, desc=f"Uploading {file_path.split('/')[-1]}")
+            self.progress_bar.setMaximum(total_size)
+            self.progress_bar.setValue(0)
 
-            reactor.callLater(0, read_and_send)
+            read_and_send()
+            # reactor.callLater(0, read_and_send)
             return server.NOT_DONE_YET
         else:
             request.setResponseCode(404)
@@ -59,7 +66,8 @@ class FileServer(resource.Resource):
 
 
 class DefaultSendingFileImplementation(ServerImplementationBase):
-    def __init__(self, file_path, send_port, filename):
+    def __init__(self, file_path, send_port, filename, ui):
+        self.progress_bar = ui
         self.file_name = filename
         self.temp_dir = None
         self.send_port = send_port
@@ -70,18 +78,29 @@ class DefaultSendingFileImplementation(ServerImplementationBase):
         self.server = None
 
     def server_implement(self, filepath: str, port: int):
-        site = server.Site(FileServer(file_path=filepath, progress_bar=None))
+        site = server.Site(FileServer(file_path=filepath, progress_bar=self.progress_bar))
         reactor.listenTCP(port, site, interface='0.0.0.0')
         reactor.run(installSignalHandlers=False)
 
+    # TODO : set the ssl
     def _server_implement(self, filepath: str, port: int):
 
         ssl_dir = os.path.join(os.path.dirname(__file__), 'ssl')
-        cert_path = os.path.join(ssl_dir, 'certificate.crt')
-        key_path = os.path.join(ssl_dir, 'privatekey.key')
 
-        site = server.Site(FileServer(file_path=filepath))
-        cert_options = ssl.CertificateOptions.fromPEMFiles(cert_path, key_path)
+        private_key = crypto.PKey()
+        private_key.generate_key(crypto.TYPE_RSA, 2048)
+
+        cert = crypto.X509()
+        cert.get_subject().CN = "example.com"
+        cert.set_serial_number(1000)
+        cert.gmtime_adj_notBefore(0)
+        cert.gmtime_adj_notAfter(365 * 24 * 60 * 60)
+        cert.set_issuer(cert.get_subject())
+        cert.set_pubkey(private_key)
+        cert.sign(private_key, "sha256")
+
+        site = server.Site(FileServer(file_path=filepath, progress_bar=NotImplemented))
+        cert_options = ssl.CertificateOptions(privateKey=private_key, certificate=cert)
 
         reactor.listenSSL(port, site, cert_options, interface='0.0.0.0')
         reactor.run(installSignalHandlers=False)
@@ -96,7 +115,7 @@ class DefaultSendingFileImplementation(ServerImplementationBase):
         try:
             sender_socket.connect((receiver['ip'], receiver_port))
             authentication_token = secrets.token_urlsafe(16)
-            url = f"http://{server}:{self.send_port}|{self.file_name}|{receiver['ip']}"
+            url = f"http://{server}:{self.send_port}|{self.file_name}"
             sender_socket.send(url.encode('utf-8'))
             status = sender_socket.recv(1024).decode('utf-8')
             if status == "1":

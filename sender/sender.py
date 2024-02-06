@@ -28,14 +28,14 @@ def dynamic_import(section_name, module_name, class_name):
 
 
 class Sender:
-    def __init__(self, file_path: str, file_name: str):
+    def __init__(self, file_path: str, file_name: str, ui):
         self.receivers = {}
         self.discovering = None
         self.setup_discovery_socket(DISCOVERY_PORT)
 
         self.file_name = file_name
         self.sending_server = None
-        self.setup_sending_file(file_path, SEND_PORT, self.file_name)
+        self.setup_sending_file(file_path, SEND_PORT, self.file_name, ui)
 
     def setup_discovery_socket(self, receive_port):
         """
@@ -58,7 +58,7 @@ class Sender:
         """
         self.discovering.close_discovery_socket()
 
-    def setup_sending_file(self, filepath, port, file_name):
+    def setup_sending_file(self, filepath, port, file_name, ui):
         """
         setup to send the file to receivers
         :param filepath: the path of the file we want to send
@@ -67,7 +67,7 @@ class Sender:
         """
         DynamicClass = dynamic_import('sending_file_implementations',
                                       SENDING_FILE_MODULE, SENDING_FILE_CLASS)
-        self.sending_server = DynamicClass(filepath, port, file_name)
+        self.sending_server = DynamicClass(filepath, port, file_name, ui)
 
     def connect_to_receiver(self, receiver_ip, receiver_port):
         """

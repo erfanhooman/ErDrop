@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class DiscoveringImplementationBase(ABC):
     @abstractmethod
-    def modify_discovery_socket(self, receive_port: int, timeout: int):
+    def modify_discovery_socket(self, *args, **kwargs):
         """
         start a server to discover the receiver
         :return:
@@ -11,7 +11,7 @@ class DiscoveringImplementationBase(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def update_receivers(self, receivers: dict):
+    def update_receivers(self, *args, **kwargs):
         """
         update the list of the receivers
         :param receivers: the dict of receivers

@@ -56,8 +56,7 @@ class DefaultStartServerImplementation(StartServerBase):
         recv = self.client_socket.recv(1024).decode('utf-8')
         url = recv.split('|')[0]
         name = recv.split('|')[1]
-        client_ip = recv.split('|')[2]
-        return url, name, client_ip
+        return url, name, client_address
 
     def send_success_message(self):
         self.client_socket.send("1".encode('utf-8'))

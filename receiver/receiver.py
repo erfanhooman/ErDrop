@@ -57,7 +57,4 @@ class Receiver:
         result = DynamicClass(url, name, client_ip, path, chunk_size).download_file()
         return result
 
-
-if __name__ == "__main__":
-    r = Receiver()
-    r.start_server()
+# TODO : add the UI for the Reciever
