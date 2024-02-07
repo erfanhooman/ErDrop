@@ -15,7 +15,7 @@ class DefaultDiscoveringImplementation(DiscoveringImplementationBase):
         self.discovery_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.discovery_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         self.discovery_socket.settimeout(timeout)
-        self.discovery_socket.bind(('<broadcast>', receive_port))
+        self.discovery_socket.bind(('', receive_port))
 
     def update_receivers(self, receivers):
         self.receivers = receivers
