@@ -12,25 +12,24 @@ class DownloadManagerImplementation:
         self.name = name
         if path is None:
             path = self.default_path()
-        self.path = path
         self.chunk_size = chunk_size
-        self.fullpath = self.get_fullpath(self.path)
-        self.headers = self.get_headers()
+        self.fullpath = self.get_fullpath(path)
 
     def get_fullpath(self, path):
-        return os.path.join(path, self.name)
-
-    def get_headers(self):
-        if os.path.exists(self.fullpath):
-            return {'Range': f'bytes={os.path.getsize(self.path)}'}
-        return {}
+        fullpath = os.path.join(path, self.name)
+        if os.path.exists(fullpath):
+            filename, file_extension = os.path.splitext(fullpath)
+            count = 1
+            while os.path.exists(f"{filename}({count}){file_extension}"):
+                count += 1
+            fullpath = f"{filename}({count}){file_extension}"
+        return fullpath
 
     def download_file(self):
         try:
-            # TODO: auth the reciever
             response_ip = socket.gethostbyname(socket.gethostname())
-            if True:
-                response = requests.get(url=self.url, headers=self.headers, stream=True, verify=True)
+            if response_ip == self.client_ip:
+                response = requests.get(url=self.url, stream=True, verify=False)
                 response.raise_for_status()
                 total_size = int(response.headers.get('content-length', 0))
 

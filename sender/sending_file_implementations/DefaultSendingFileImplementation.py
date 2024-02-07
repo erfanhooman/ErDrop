@@ -5,9 +5,6 @@ import secrets
 import threading
 
 from OpenSSL import crypto
-from OpenSSL.crypto import PKey
-from cryptography import x509
-from tqdm import tqdm
 
 from twisted.internet import reactor, ssl
 from twisted.web import resource, server
@@ -15,7 +12,6 @@ from twisted.web import resource, server
 from sender.sending_file_implementations.SendingFIle import ServerImplementationBase
 
 
-# TODO: put the progress bar in the UI of the program
 class FileServer(resource.Resource):
     isLeaf = True
 
@@ -57,7 +53,6 @@ class FileServer(resource.Resource):
             self.progress_bar.setValue(0)
 
             read_and_send()
-            # reactor.callLater(0, read_and_send)
             return server.NOT_DONE_YET
         else:
             request.setResponseCode(404)
@@ -78,12 +73,6 @@ class DefaultSendingFileImplementation(ServerImplementationBase):
         self.server = None
 
     def server_implement(self, filepath: str, port: int):
-        site = server.Site(FileServer(file_path=filepath, progress_bar=self.progress_bar))
-        reactor.listenTCP(port, site, interface='0.0.0.0')
-        reactor.run(installSignalHandlers=False)
-
-    # TODO : set the ssl
-    def _server_implement(self, filepath: str, port: int):
 
         ssl_dir = os.path.join(os.path.dirname(__file__), 'ssl')
 
@@ -99,7 +88,7 @@ class DefaultSendingFileImplementation(ServerImplementationBase):
         cert.set_pubkey(private_key)
         cert.sign(private_key, "sha256")
 
-        site = server.Site(FileServer(file_path=filepath, progress_bar=NotImplemented))
+        site = server.Site(FileServer(file_path=filepath, progress_bar=self.progress_bar))
         cert_options = ssl.CertificateOptions(privateKey=private_key, certificate=cert)
 
         reactor.listenSSL(port, site, cert_options, interface='0.0.0.0')
@@ -109,13 +98,13 @@ class DefaultSendingFileImplementation(ServerImplementationBase):
         reactor.stop()
         sys.exit()
 
-    def connect_and_send(self, receiver, receiver_port, server):
+    def connect_and_send(self, receiver, receiver_port, host):
         sender_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         try:
             sender_socket.connect((receiver['ip'], receiver_port))
             authentication_token = secrets.token_urlsafe(16)
-            url = f"http://{server}:{self.send_port}|{self.file_name}"
+            url = f"https://{host}:{self.send_port}|{self.file_name}"
             sender_socket.send(url.encode('utf-8'))
             status = sender_socket.recv(1024).decode('utf-8')
             if status == "1":

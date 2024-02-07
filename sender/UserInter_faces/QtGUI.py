@@ -2,6 +2,8 @@ from sender.UserInter_faces.Base import UIHandlerBase
 from PyQt6 import QtWidgets as Q
 from PyQt6.QtCore import QTimer
 
+progress = None
+
 
 class QtUIHandler:
     def __init__(self, parent, Sender, port):
@@ -12,15 +14,10 @@ class QtUIHandler:
 
     def setupUI(self):
         receivers_list_window = ReceiversListWindow()
-        progress_bar = Q.QProgressBar()
+        progress_bar = progress
+
         sender = SenderTest(self.parent, self.Sender, receivers_list_window, self.port, progress_bar)
         sender.show_receivers_list(receivers_list_window)
-
-
-        layout = Q.QVBoxLayout()
-        layout.addWidget(progress_bar)
-
-        self.parent.setLayout(layout)
 
 
 class SenderTest(UIHandlerBase):
@@ -85,19 +82,10 @@ class ReceiversListWindow(Q.QWidget):
 
         self.setWindowTitle("Receivers List")
         self.setGeometry(500, 200, 300, 400)
-
         self.list_widget = Q.QListWidget(self)
+        self.progress_bar = Q.QProgressBar()
         layout = Q.QVBoxLayout(self)
         layout.addWidget(self.list_widget)
-
-
-class ProgressWindow(Q.QMainWindow):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setWindowTitle("Progress Window")
-        self.progress_bar = Q.QProgressBar()
-        layout = Q.QVBoxLayout()
         layout.addWidget(self.progress_bar)
-        central_widget = Q.QWidget()
-        central_widget.setLayout(layout)
-        self.setCentralWidget(central_widget)
+        global progress
+        progress = self.progress_bar

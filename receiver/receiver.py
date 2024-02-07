@@ -56,5 +56,3 @@ class Receiver:
                                       DOWNLOAD_MANAGER_MODULE, DOWNLOAD_MANAGER_CLASS)
         result = DynamicClass(url, name, client_ip, path, chunk_size).download_file()
         return result
-
-# TODO : add the UI for the Reciever
