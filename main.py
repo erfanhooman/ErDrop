@@ -27,12 +27,10 @@ class MyWindow(QWidget):
         self.close()
 
     def create_receiver_instance(self):
-        self.close()
         r = Receiver()
         r.start_server()
+        self.close()
 
-
-# TODO: delete the print statements or put it as info or Error Pop up in GUI
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

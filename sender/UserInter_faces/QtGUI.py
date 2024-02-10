@@ -89,3 +89,4 @@ class ReceiversListWindow(Q.QWidget):
         layout.addWidget(self.progress_bar)
         global progress
         progress = self.progress_bar
+        

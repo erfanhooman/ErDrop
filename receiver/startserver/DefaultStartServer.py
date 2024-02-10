@@ -28,21 +28,6 @@ class StartServerBase(ABC):
 
 
 # TODO: add the UI for reciever
-class ReceiverWindow(Q.QWidget):
-    def __init__(self):
-        super().__init__()
-
-        self.setWindowTitle(f"Reciever")
-        self.setGeometry(500, 200, 300, 400)
-
-        self.message_label = Q.QLabel("", self)
-        self.message_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        layout = Q.QVBoxLayout(self)
-        layout.addWidget(self.message_label)
-
-    def update_message(self, message):
-        self.message_label.setText(message)
 
 
 class DefaultStartServerImplementation(StartServerBase):
@@ -59,20 +44,17 @@ class DefaultStartServerImplementation(StartServerBase):
                 self.server_socket.bind((host, port))
                 flag = False
             except OSError:
-                # self.receiver_window.update_message(f"the port is not free yet, please wait few seconds ...")
                 print(f"the port is not free yet, please wait few seconds ...")
                 time.sleep(5)
 
         self.server_socket.listen()
 
-        # self.receiver_window.update_message(f"server listserver_status_signal = pyqtSignal(str)ening on {host}:{port}**")
         print(f"server listening on {host}:{port}")
 
         discovery = threading.Thread(target=self.broadcast_receiver_discovery, args=(port, name))
         discovery.start()
 
         self.client_socket, client_address = self.server_socket.accept()
-        # self.receiver_window.update_message(f"Connection established with {client_address}")
         print(f"Connection established with {client_address[0]}")
 
         recv = self.client_socket.recv(1024).decode('utf-8')
