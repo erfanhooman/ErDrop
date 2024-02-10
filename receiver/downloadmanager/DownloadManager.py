@@ -28,7 +28,7 @@ class DownloadManagerImplementation:
     def download_file(self):
         try:
             response_ip = socket.gethostbyname(socket.gethostname())
-            if response_ip == self.client_ip:
+            if True:
                 response = requests.get(url=self.url, stream=True, verify=False)
                 response.raise_for_status()
                 total_size = int(response.headers.get('content-length', 0))
