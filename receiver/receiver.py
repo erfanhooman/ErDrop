@@ -1,9 +1,5 @@
 from configuration import get_config
 
-# --- Temp --- #
-from PyQt6 import QtWidgets as Q
-
-
 config = get_config()
 
 RECEIVER_HOST = config['Receiver']['receiver_host']
