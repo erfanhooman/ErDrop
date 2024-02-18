@@ -1,7 +1,7 @@
 import socket
-from configuration import get_config
+from configuration import get_config, get_host
 
-HOST = socket.gethostbyname(socket.gethostname())
+HOST = get_host()
 
 config = get_config()
 

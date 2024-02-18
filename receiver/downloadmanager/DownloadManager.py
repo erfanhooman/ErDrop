@@ -7,6 +7,7 @@ from tqdm import tqdm
 
 class DownloadManagerImplementation:
     def __init__(self, url, name, client_ip, path=None, chunk_size=8192):
+        print("url:", url)
         self.client_ip = client_ip
         self.url = url
         self.name = name
@@ -47,8 +48,11 @@ class DownloadManagerImplementation:
             else:
                 print("Download file stopped, the client didnt authorized")
                 return False
-        except requests.exceptions.RequestException as e:
-            print(f"Error downloading file: {e}")
+        except ValueError:
+            print("wtf")
+        # except requests.exceptions.RequestException as e:
+        #     print("errrrrrrrrrr")
+        #     print(f"Error downloading file: {e}")
             return False
 
     @staticmethod

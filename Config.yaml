@@ -16,7 +16,7 @@ Module:
 
 Settings:
   Receiver:
-    name: fedora
+    name: erfan
     path: null
     receive_port: 5000
     receiver_host: 0.0.0.0
