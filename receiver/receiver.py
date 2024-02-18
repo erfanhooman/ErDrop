@@ -1,5 +1,9 @@
 from configuration import get_config
 
+# --- Temp --- #
+from PyQt6 import QtWidgets as Q
+
+
 config = get_config()
 
 RECEIVER_HOST = config['Receiver']['receiver_host']
@@ -24,7 +28,11 @@ def dynamic_import(section_name, module_name, class_name):
 
 
 class Receiver:
-    def __init__(self):
+    def __init__(self, parent):
+        self.parent = parent
+        self.ui_handler()
+
+    def ui_handler(self):
         url, name, client_ip = self.start_server()
         result = self.download_manager(url, name, client_ip, PATH)
         if result:

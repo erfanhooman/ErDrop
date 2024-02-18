@@ -27,8 +27,7 @@ class MyWindow(QWidget):
         self.close()
 
     def create_receiver_instance(self):
-        self.close()
-        r = Receiver()
+        r = Receiver(self)
         r.start_server()
 
 
