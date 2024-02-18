@@ -23,7 +23,6 @@ class QtUIHandler:
 class SenderTest(UIHandlerBase):
     def __init__(self, parent, Sender, receivers_list_window, port, ui):
         self.port = port
-        self.receivers_list_window = receivers_list_window
         self.parent = parent
 
         path, name = self.choose_file()

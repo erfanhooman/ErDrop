@@ -1,3 +1,5 @@
+import time
+
 from configuration import get_config
 
 # --- Temp --- #
@@ -33,6 +35,10 @@ class Receiver:
         self.ui_handler()
 
     def ui_handler(self):
+        window = ReceiverWindow()
+        self.parent.close()
+        window.show()
+        window.close()
         url, name, client_ip = self.start_server()
         result = self.download_manager(url, name, client_ip, PATH)
         if result:
@@ -64,3 +70,17 @@ class Receiver:
                                       DOWNLOAD_MANAGER_MODULE, DOWNLOAD_MANAGER_CLASS)
         result = DynamicClass(url, name, client_ip, path, chunk_size).download_file()
         return result
+
+
+class ReceiverWindow(Q.QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Reciever Waiting...")
+        self.setGeometry(500, 200, 300, 400)
+        self.list_widget = Q.QListWidget(self)
+        # self.message_label = Q.QLabel("Waiting for server to start...", self)
+        layout = Q.QVBoxLayout(self)
+        layout.addWidget(self.list_widget)
+
+    def update_message(self, message):
+        self.message_label.setText(message)
