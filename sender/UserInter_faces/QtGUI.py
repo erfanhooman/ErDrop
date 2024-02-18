@@ -6,7 +6,7 @@ progress = None
 
 
 class QtUIHandler:
-    def __init__(self, parent, Sender, port):
+    def __init__(self, Sender, port, parent):
         self.parent = parent
         self.Sender = Sender
         self.port = port

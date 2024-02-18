@@ -8,7 +8,7 @@ class GUIHandler(UIHandlerBase):
     """
     handler of the UI
     """
-    def __init__(self, Sender, port):
+    def __init__(self, Sender, port, parent):
         """
         to do call the three essential method and other method
         """

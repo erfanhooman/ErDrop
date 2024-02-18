@@ -72,12 +72,12 @@ class DefaultSendingFileImplementation(ServerImplementationBase):
         server_thread.start()
         self.server = None
 
-    def server_implement(self, filepath, port):
+    def _server_implement(self, filepath, port):
         site = server.Site(FileServer(file_path=filepath, progress_bar=self.progress_bar))
         reactor.listenTCP(port, site, interface='0.0.0.0')
         reactor.run()
 
-    def _server_implement(self, filepath: str, port: int):
+    def server_implement(self, filepath: str, port: int):
 
         ssl_dir = os.path.join(os.path.dirname(__file__), 'ssl')
 
@@ -110,7 +110,6 @@ class DefaultSendingFileImplementation(ServerImplementationBase):
             sender_socket.connect((receiver['ip'], receiver_port))
             authentication_token = secrets.token_urlsafe(16)
             url = f"https://{host}:{self.send_port}|{self.file_name}"
-            print(1223213213213, url)
             sender_socket.send(url.encode('utf-8'))
             status = sender_socket.recv(1024).decode('utf-8')
             if status == "1":
