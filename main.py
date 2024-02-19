@@ -37,3 +37,5 @@ if __name__ == "__main__":
     window = MyWindow()
     window.show()
     sys.exit(app.exec())
+
+# TODO: ui of the sending file and downloading it is not sync and close the program before the download compelete

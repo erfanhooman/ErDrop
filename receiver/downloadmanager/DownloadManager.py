@@ -1,6 +1,5 @@
 import os
-import socket
-
+from configuration import get_host
 import requests
 from tqdm import tqdm
 
@@ -28,7 +27,7 @@ class DownloadManagerImplementation:
 
     def download_file(self):
         try:
-            response_ip = socket.gethostbyname(socket.gethostname())
+            response_ip = get_host()
             if True:
                 response = requests.get(url=self.url, stream=True, verify=False)
                 response.raise_for_status()
@@ -46,13 +45,11 @@ class DownloadManagerImplementation:
                 print(f"Downloaded: {self.fullpath.split('/')[-1]} to {self.fullpath}")
                 return True
             else:
+                print(self.client_ip, "===", response_ip)
                 print("Download file stopped, the client didnt authorized")
                 return False
-        except ValueError:
-            print("wtf")
-        # except requests.exceptions.RequestException as e:
-        #     print("errrrrrrrrrr")
-        #     print(f"Error downloading file: {e}")
+        except requests.exceptions.RequestException as e:
+            print(f"Error downloading file: {e}")
             return False
 
     @staticmethod
