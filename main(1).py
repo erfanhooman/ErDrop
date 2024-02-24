@@ -1,4 +1,5 @@
 import sys
+import time
 
 from sender.sender import UIHandler
 from receiver.receiver import Receiver
@@ -12,17 +13,21 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Er-Drop")
 
+        # Create buttons
         self.button1 = QPushButton("Send File")
         self.button2 = QPushButton("Receive File")
 
+        # Add buttons to layout
         layout = QVBoxLayout()
         layout.addWidget(self.button1)
         layout.addWidget(self.button2)
 
+        # Create a central widget and set the layout
         central_widget = QWidget()
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
 
+        # Connect button clicks to functions
         self.button1.clicked.connect(self.handle_send)
         self.button2.clicked.connect(self.handle_receive)
 
@@ -31,6 +36,8 @@ class MainWindow(QMainWindow):
         self.close()
 
     def handle_receive(self):
+        # self.window = Window("Receive File", "Waiting for Sender")
+        # self.window.show()
         Receiver(self)
 
 

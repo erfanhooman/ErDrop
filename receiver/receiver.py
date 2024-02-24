@@ -1,9 +1,8 @@
-import time
-
+import threading
+from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel
 from configuration import get_config
-
-# --- Temp --- #
 from PyQt6 import QtWidgets as Q
+from PyQt6.QtCore import Qt
 
 
 config = get_config()
@@ -35,18 +34,21 @@ class Receiver:
         self.ui_handler()
 
     def ui_handler(self):
-        window = ReceiverWindow()
-        self.parent.close()
-        window.show()
-        window.close()
-        url, name, client_ip = self.start_server()
-        result = self.download_manager(url, name, client_ip, PATH)
-        if result:
-            print("Download Successfully")
-            self.server.send_success_message()
-            self.server.server_close()
-        else:
-            print("Download Failed TryAgain")
+        self.parent.window = Window("Receive File", "Waiting for Sender")
+        self.parent.window.show()
+
+        def start():
+            url, name, client_ip = self.start_server()
+            result = self.download_manager(url, name, client_ip, PATH)
+            if result:
+                self.parent.window.update_message("Download Successfully")
+                self.server.send_success_message()
+                self.server.server_close()
+            else:
+                self.parent.window.update_message("Download Failed TryAgain")
+                print("Download Failed TryAgain")
+
+        threading.Thread(target=start, args=()).start()
 
     def start_server(self):
         """
@@ -70,6 +72,25 @@ class Receiver:
                                       DOWNLOAD_MANAGER_MODULE, DOWNLOAD_MANAGER_CLASS)
         result = DynamicClass(url, name, client_ip, path, chunk_size).download_file()
         return result
+
+
+class Window(QDialog):
+    def __init__(self, title, text):
+        super().__init__()
+
+        self.setWindowTitle(title)
+        self.label = QLabel()
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.label)
+        self.setLayout(layout)
+
+        self.initial_message = text
+        self.update_message(self.initial_message)
+
+    def update_message(self, message):
+        self.label.setText(message)
 
 
 class ReceiverWindow(Q.QWidget):

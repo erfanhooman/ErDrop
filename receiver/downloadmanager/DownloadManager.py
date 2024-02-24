@@ -25,7 +25,7 @@ class DownloadManagerImplementation:
             fullpath = f"{filename}({count}){file_extension}"
         return fullpath
 
-    def download_file(self):
+    def download_file(self, message_updater):
         try:
             response_ip = socket.gethostbyname(socket.gethostname())
             if True:
