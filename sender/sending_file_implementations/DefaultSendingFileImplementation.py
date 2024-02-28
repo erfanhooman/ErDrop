@@ -42,7 +42,6 @@ class FileServer(resource.Resource):
                 data = file.read(4096)
                 if data:
                     send_chunk(data)
-                    # reactor.callLater(0, read_and_send)
                 else:
                     file.close()
                     finish_request(None)
@@ -71,11 +70,6 @@ class DefaultSendingFileImplementation(ServerImplementationBase):
                                          args=(file_path, send_port))
         server_thread.start()
         self.server = None
-
-    def _server_implement(self, filepath, port):
-        site = server.Site(FileServer(file_path=filepath, progress_bar=self.progress_bar))
-        reactor.listenTCP(port, site, interface='0.0.0.0')
-        reactor.run()
 
     def server_implement(self, filepath: str, port: int):
 

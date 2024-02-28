@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 import sys
-from sender.UserInter_faces.Base import UIHandlerBase
+from sender.userInter_faces.BaseGUI import UIHandlerBase
 
 
 class GUIHandler(UIHandlerBase):

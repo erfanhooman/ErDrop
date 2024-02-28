@@ -27,16 +27,16 @@ class StartServerBase(ABC):
         raise NotImplementedError
 
 
-# TODO: add the UI for reciever
-
-
 class DefaultStartServerImplementation(StartServerBase):
-    def __init__(self):
+    def __init__(self, ui):
+        self.connection_accepted = False
+        self.connection_info = None
+        self.ui = ui
         self.server_socket = None
         self.client_socket = None
         self.broadcast_flag = True
 
-    def start_server(self, host, port, name, parent=NotImplemented):
+    def start_server(self, host, port, name):
         flag = True
         while flag:
             self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -44,23 +44,45 @@ class DefaultStartServerImplementation(StartServerBase):
                 self.server_socket.bind((host, port))
                 flag = False
             except OSError:
-                print(f"the port is not free yet, please wait few seconds ...")
+                self.ui.update_message("Getting Your System Ready...")
                 time.sleep(5)
 
         self.server_socket.listen()
 
         print(f"server listening on {host}:{port}")
+        self.ui.update_message("Waiting for Reciever...")
 
         discovery = threading.Thread(target=self.broadcast_receiver_discovery, args=(port, name))
         discovery.start()
 
-        self.client_socket, client_address = self.server_socket.accept()
-        print(f"Connection established with {client_address[0]}")
+        while True:
+            self.client_socket, client_address = self.server_socket.accept()
+            self.ui.update_message(f"Do you want to accept connection from {client_address}?")
+            self.ui.show_buttons()
 
+            self.ui.connection_accepted.connect(self.on_connection_accepted)
+            self.ui.connection_rejected.connect(self.on_connection_rejected)
+
+            if self.connection_info:
+                self.ui.hide_buttons()
+                return self.connection_info
+
+    def on_connection_accepted(self):
+        print("Connection accepted")
         recv = self.client_socket.recv(1024).decode('utf-8')
         url = recv.split('|')[0]
         name = recv.split('|')[1]
-        return url, name, client_address[0]
+        client_ip = self.client_address[0]
+        self.connection_info = (url, name, client_ip)
+        self.connection_accepted = True
+        self.ui.connection_accepted.disconnect()
+
+    def on_connection_rejected(self):
+        print("Connection rejected.")
+        self.client_socket.close()
+        self.connection_accepted = True
+        self.ui.hide_buttons()
+        self.ui.connection_rejected.disconnect()
 
     def send_success_message(self):
         self.client_socket.send("1".encode('utf-8'))

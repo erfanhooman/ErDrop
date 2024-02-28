@@ -1,4 +1,4 @@
-from sender.UserInter_faces.Base import UIHandlerBase
+from sender.userInter_faces.BaseGUI import UIHandlerBase
 from PyQt6 import QtWidgets as Q
 from PyQt6.QtCore import QTimer
 
@@ -88,4 +88,3 @@ class ReceiversListWindow(Q.QWidget):
         layout.addWidget(self.progress_bar)
         global progress
         progress = self.progress_bar
-        

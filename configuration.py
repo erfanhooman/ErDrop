@@ -48,6 +48,8 @@ class Configuration:
                 'RECEIVE_PORT': receive_port,
                 'NAME': name,
                 'PATH': None,
+                'USER_INTERFACE_MODULE': 'QtGUI',
+                'USER_INTERFACE_CLASS': 'QtWindow',
                 'START_SERVER_MODULE': 'DefaultStartServer',
                 'START_SERVER_CLASS': 'DefaultStartServerImplementation',
                 'DOWNLOAD_MANAGER_MODULE': 'DownloadManager',
@@ -84,6 +86,8 @@ class Configuration:
 
             'Module': {
                 'Receiver': {
+                    'user_interface_module': c['Receiver']['USER_INTERFACE_MODULE'],
+                    'user_interface_class': c['Receiver']['USER_INTERFACE_CLASS'],
                     'start_server_module': c['Receiver']['START_SERVER_MODULE'],
                     'start_server_class': c['Receiver']['START_SERVER_CLASS'],
                     'download_manager_module': c['Receiver']['DOWNLOAD_MANAGER_MODULE'],
@@ -114,6 +118,8 @@ class Configuration:
         self.C['Receiver']['receiver_host'] = config['Settings']['Receiver']['receiver_host']
         self.C['Receiver']['name'] = config['Settings']['Receiver']['name']
         self.C['Receiver']['path'] = config['Settings']['Receiver']['path']
+        self.C['Receiver']['user_interface_module'] = config['Module']['Receiver']['user_interface_module']
+        self.C['Receiver']['user_interface_class'] = config['Module']['Receiver']['user_interface_class']
         self.C['Receiver']['start_server_module'] = config['Module']['Receiver']['start_server_module']
         self.C['Receiver']['start_server_class'] = config['Module']['Receiver']['start_server_class']
         self.C['Receiver']['download_manager_module'] = config['Module']['Receiver']['download_manager_module']

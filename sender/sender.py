@@ -82,6 +82,6 @@ def UIHandler(parent):
     """
     UI Handler
     """
-    DynamicClass = dynamic_import('UserInter_faces',
+    DynamicClass = dynamic_import('userInter_faces',
                                   UI_MODULE, UI_CLASS)
     DynamicClass(Sender, DISCOVERY_PORT, parent)

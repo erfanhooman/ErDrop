@@ -1,5 +1,7 @@
 Module:
   Receiver:
+    user_interface_class: QtWindow
+    user_interface_module: QtGUI
     download_manager_class: DownloadManagerImplementation
     download_manager_module: DownloadManager
     start_server_class: DefaultStartServerImplementation
@@ -9,8 +11,6 @@ Module:
     discover_receiver_module: DefaultDiscoveringImplementation
     sending_file_class: DefaultSendingFileImplementation
     sending_file_module: DefaultSendingFileImplementation
-#    user_interface_class: GUIHandler
-#    user_interface_module: TkinterGUI
     user_interface_class: QtUIHandler
     user_interface_module: QtGUI
 

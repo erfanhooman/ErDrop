@@ -11,7 +11,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Er-Drop")
-
+        self.setFixedSize(250, 100)
         self.button1 = QPushButton("Send File")
         self.button2 = QPushButton("Receive File")
 
@@ -27,11 +27,12 @@ class MainWindow(QMainWindow):
         self.button2.clicked.connect(self.handle_receive)
 
     def handle_send(self):
+        self.hide()
         sender = UIHandler(self)
-        self.close()
 
     def handle_receive(self):
-        Receiver(self)
+        self.hide()
+        Receiver()
 
 
 class Window(QDialog):
