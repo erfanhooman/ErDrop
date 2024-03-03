@@ -2,8 +2,7 @@ import socket
 import sys
 import threading
 import time
-from PyQt6 import QtWidgets as Q
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import QObject
 from abc import ABC, abstractmethod
 
 
@@ -27,8 +26,9 @@ class StartServerBase(ABC):
         raise NotImplementedError
 
 
-class DefaultStartServerImplementation(StartServerBase):
+class DefaultStartServerImplementation:
     def __init__(self, ui):
+        self.client_address = None
         self.connection_accepted = False
         self.connection_info = None
         self.ui = ui
@@ -56,13 +56,13 @@ class DefaultStartServerImplementation(StartServerBase):
         discovery.start()
 
         while True:
-            self.client_socket, client_address = self.server_socket.accept()
-            self.ui.update_message(f"Do you want to accept connection from {client_address}?")
+            self.client_socket, self.client_address = self.server_socket.accept()
+            self.ui.update_message(f"Do you want to accept connection from {self.client_address}?")
             self.ui.show_buttons()
 
             self.ui.connection_accepted.connect(self.on_connection_accepted)
-            self.ui.connection_rejected.connect(self.on_connection_rejected)
-
+            self.ui.connection_accepted.connect(self.on_connection_rejected)
+            print("1")
             if self.connection_info:
                 self.ui.hide_buttons()
                 return self.connection_info
@@ -74,15 +74,11 @@ class DefaultStartServerImplementation(StartServerBase):
         name = recv.split('|')[1]
         client_ip = self.client_address[0]
         self.connection_info = (url, name, client_ip)
-        self.connection_accepted = True
-        self.ui.connection_accepted.disconnect()
 
     def on_connection_rejected(self):
         print("Connection rejected.")
         self.client_socket.close()
-        self.connection_accepted = True
         self.ui.hide_buttons()
-        self.ui.connection_rejected.disconnect()
 
     def send_success_message(self):
         self.client_socket.send("1".encode('utf-8'))

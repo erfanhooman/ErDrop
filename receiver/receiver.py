@@ -24,8 +24,8 @@ def dynamic_import(section_name, module_name, class_name):
         module = __import__(f'receiver.{section_name}.{module_name}')
         DynamicClass = getattr(getattr(getattr(module, section_name), module_name), class_name)
         return DynamicClass
-    except TypeError as e:
-        raise ValueError(f"Something Wrong with config file {section_name} part")
+    except ValueError as e:
+        raise TypeError(f"Something Wrong with config file {section_name} part")
 
 
 class Receiver:

@@ -16,7 +16,7 @@ class QtWindow(QWidget):
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.accept_button = QPushButton("Accept")
-        self.reject_button = QPushButton("Rejec # Continue listening for next connection attemptt")
+        self.reject_button = QPushButton("Reject")
 
         layout = QVBoxLayout()
         layout.addWidget(self.label)
@@ -27,10 +27,10 @@ class QtWindow(QWidget):
         self.initial_message = "Please Wait few Second..."
         self.update_message(self.initial_message)
 
-        self.accept_button.clicked.connect(self.accept_connection)
-        self.reject_button.clicked.connect(self.reject_connection)
-
         self.hide_buttons()
+
+        self.accept_button.clicked.connect(self.connection_accepted.emit)
+        self.reject_button.clicked.connect(self.connection_rejected.emit)
 
     def update_message(self, message):
         self.label.setText(message)
@@ -42,10 +42,3 @@ class QtWindow(QWidget):
     def hide_buttons(self):
         self.accept_button.hide()
         self.reject_button.hide()
-
-    def accept_connection(self):
-        self.connection_accepted.emit()
-
-    def reject_connection(self):
-        self.connection_rejected.emit()
-
