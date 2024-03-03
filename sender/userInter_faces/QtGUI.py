@@ -1,3 +1,5 @@
+import threading
+
 from sender.userInter_faces.BaseGUI import UIHandlerBase
 from PyQt6 import QtWidgets as Q
 from PyQt6.QtCore import QTimer
@@ -68,11 +70,10 @@ class SenderTest(UIHandlerBase):
 
     def select_and_send(self, item):
         receiver_name = item.text()
-        if receiver_name in self.sender.receivers:
-            self.sender.connect_to_receiver(self.sender.receivers[receiver_name], self.port)
-            self.sender.end_discovering()
-        else:
-            Q.QMessageBox.information(self.receivers_list_window, "Error", f"There is NO Receiver named {receiver_name}")
+        print("select and now going to send")
+        func = threading.Thread(target=self.sender.connect_to_receiver, args=(self.sender.receivers[receiver_name], self.port))
+        func.start()
+        # self.sender.end_discovering()
 
 
 class ReceiversListWindow(Q.QWidget):

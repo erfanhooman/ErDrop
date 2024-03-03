@@ -60,12 +60,25 @@ class DefaultStartServerImplementation:
             self.ui.update_message(f"Do you want to accept connection from {self.client_address}?")
             self.ui.show_buttons()
 
-            self.ui.connection_accepted.connect(self.on_connection_accepted)
-            self.ui.connection_accepted.connect(self.on_connection_rejected)
-            print("1")
-            if self.connection_info:
-                self.ui.hide_buttons()
-                return self.connection_info
+            flag = True
+            while flag:
+                print("1")
+                print("self.ui.accept: ", self.ui.accept)
+                print("self.ui.reject: ", self.ui.reject)
+                time.sleep(5)
+
+                if self.ui.accept is True:
+                    print("self.ui.accept after click: ", self.ui.accept)
+                    self.on_connection_accepted()
+                    self.ui.hide_buttons()
+                    flag = False
+                    return self.connection_info
+
+                if self.ui.reject is True:
+                    print("reject")
+                    self.on_connection_rejected()
+                    self.ui.reject = False
+                    flag = False
 
     def on_connection_accepted(self):
         print("Connection accepted")

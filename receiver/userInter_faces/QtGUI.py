@@ -5,11 +5,11 @@ from PyQt6.QtWidgets import QVBoxLayout, QLabel, QWidget, QPushButton
 
 
 class QtWindow(QWidget):
-    connection_accepted = pyqtSignal()
-    connection_rejected = pyqtSignal()
-
     def __init__(self, title):
         super().__init__()
+        self.accept = False
+        self.reject = False
+
         self.setWindowTitle(title)
         self.setFixedSize(250, 100)
         self.label = QLabel()
@@ -17,6 +17,9 @@ class QtWindow(QWidget):
 
         self.accept_button = QPushButton("Accept")
         self.reject_button = QPushButton("Reject")
+
+        self.accept_button.clicked.connect(self.accept_clicked)
+        self.accept_button.clicked.connect(self.reject_clicked)
 
         layout = QVBoxLayout()
         layout.addWidget(self.label)
@@ -29,9 +32,6 @@ class QtWindow(QWidget):
 
         self.hide_buttons()
 
-        self.accept_button.clicked.connect(self.connection_accepted.emit)
-        self.reject_button.clicked.connect(self.connection_rejected.emit)
-
     def update_message(self, message):
         self.label.setText(message)
 
@@ -42,3 +42,9 @@ class QtWindow(QWidget):
     def hide_buttons(self):
         self.accept_button.hide()
         self.reject_button.hide()
+
+    def accept_clicked(self):
+        self.accept = True
+
+    def reject_clicked(self):
+        self.reject = True
