@@ -60,6 +60,7 @@ class Configuration:
                 'SEND_PORT': send_port,
                 'DISCOVERY_PORT': discovery_port,
                 'DISCOVERY_TIMEOUT': discovery_timeout,
+                'NAME': name,
                 'DISCOVER_RECEIVER_MODULE': 'DefaultDiscoveringImplementation',
                 'DISCOVER_RECEIVER_CLASS': 'DefaultDiscoveringImplementation',
                 'SENDING_FILE_MODULE': 'DefaultSendingFileImplementation',
@@ -80,7 +81,8 @@ class Configuration:
                 'Sender': {
                     'send_port': c['Sender']['SEND_PORT'],
                     'discovery_port': c['Sender']['DISCOVERY_PORT'],
-                    'discovery_timeout': c['Sender']['DISCOVERY_TIMEOUT']
+                    'discovery_timeout': c['Sender']['DISCOVERY_TIMEOUT'],
+                    'name': c['Sender']['NAME']
                 }
             },
 
@@ -125,6 +127,7 @@ class Configuration:
         self.C['Receiver']['download_manager_module'] = config['Module']['Receiver']['download_manager_module']
         self.C['Receiver']['download_manager_class'] = config['Module']['Receiver']['download_manager_class']
 
+        self.C['Sender']['name'] = config['Settings']['Receiver']['name']
         self.C['Sender']['discover_receiver_module'] = config['Module']['Sender']['discover_receiver_module']
         self.C['Sender']['discover_receiver_class'] = config['Module']['Sender']['discover_receiver_class']
         self.C['Sender']['sending_file_module'] = config['Module']['Sender']['sending_file_module']

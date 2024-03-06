@@ -50,8 +50,9 @@ class Receiver:
                 self.server.send_success_message()
                 self.server.server_close()
             else:
-                self.ui.update_message("Download Failed TryAgain")
-                print("Download Failed TryAgain")
+                self.ui.update_message("Download Failed")
+                self.server.send_fail_message()
+                self.server.server_close()
 
         threading.Thread(target=start, args=()).start()
 

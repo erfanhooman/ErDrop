@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QVBoxLayout, QLabel, QWidget, QPushButton
 
 
@@ -11,7 +11,7 @@ class QtWindow(QWidget):
         self.reject = False
 
         self.setWindowTitle(title)
-        self.setFixedSize(250, 100)
+        self.setFixedSize(450, 100)
         self.label = QLabel()
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -19,7 +19,7 @@ class QtWindow(QWidget):
         self.reject_button = QPushButton("Reject")
 
         self.accept_button.clicked.connect(self.accept_clicked)
-        self.accept_button.clicked.connect(self.reject_clicked)
+        self.reject_button.clicked.connect(self.reject_clicked)
 
         layout = QVBoxLayout()
         layout.addWidget(self.label)

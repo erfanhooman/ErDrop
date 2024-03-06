@@ -16,11 +16,12 @@ Module:
 
 Settings:
   Receiver:
-    name: fedora
+    name: fedora_recv
     path: null
     receive_port: 5000
     receiver_host: 0.0.0.0
   Sender:
+    name: fedora_send
     discovery_port: 5000
     discovery_timeout: 1.0
     send_port: 25622

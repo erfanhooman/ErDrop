@@ -8,6 +8,7 @@ config = get_config()
 SEND_PORT = config['Sender']['send_port']
 DISCOVERY_PORT = config['Sender']['discovery_port']
 DISCOVERY_TIMEOUT = config['Sender']['discovery_timeout']
+NAME = config['Sender']['name']
 
 DISCOVER_RECEIVER_MODULE = config['Sender']['discover_receiver_module']
 DISCOVER_RECEIVER_CLASS = config['Sender']['discover_receiver_class']
@@ -35,7 +36,7 @@ class Sender:
 
         self.file_name = file_name
         self.sending_server = None
-        self.setup_sending_file(file_path, SEND_PORT, self.file_name, ui)
+        self.setup_sending_file(file_path, SEND_PORT, self.file_name, ui, NAME)
 
     def setup_discovery_socket(self, receive_port):
         """
@@ -58,7 +59,7 @@ class Sender:
         """
         self.discovering.close_discovery_socket()
 
-    def setup_sending_file(self, filepath, port, file_name, ui):
+    def setup_sending_file(self, filepath, port, file_name, ui, name):
         """
         setup to send the file to receivers
         :param filepath: the path of the file we want to send
@@ -67,7 +68,7 @@ class Sender:
         """
         DynamicClass = dynamic_import('sending_file_implementations',
                                       SENDING_FILE_MODULE, SENDING_FILE_CLASS)
-        self.sending_server = DynamicClass(filepath, port, file_name, ui)
+        self.sending_server = DynamicClass(filepath, port, file_name, ui, name)
 
     def connect_to_receiver(self, receiver_ip, receiver_port):
         """

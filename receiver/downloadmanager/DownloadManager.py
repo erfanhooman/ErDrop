@@ -28,25 +28,21 @@ class DownloadManagerImplementation:
     def download_file(self):
         try:
             response_ip = socket.gethostbyname(socket.gethostname())
-            if True:
-                response = requests.get(url=self.url, stream=True, verify=False)
-                response.raise_for_status()
-                total_size = int(response.headers.get('content-length', 0))
+            response = requests.get(url=self.url, stream=True, verify=False)
+            response.raise_for_status()
+            total_size = int(response.headers.get('content-length', 0))
 
-                with open(self.fullpath, 'wb') as file, tqdm(
-                        desc=f"Downloading {self.fullpath.split('/')[-1]}", total=total_size,
-                        unit='B', unit_scale=True
-                ) as pbar:
-                    for chunk in response.iter_content(chunk_size=self.chunk_size):
-                        if chunk:
-                            file.write(chunk)
-                            pbar.update(len(chunk))
+            with open(self.fullpath, 'wb') as file, tqdm(
+                    desc=f"Downloading {self.fullpath.split('/')[-1]}", total=total_size,
+                    unit='B', unit_scale=True
+            ) as pbar:
+                for chunk in response.iter_content(chunk_size=self.chunk_size):
+                    if chunk:
+                        file.write(chunk)
+                        pbar.update(len(chunk))
 
-                print(f"Downloaded: {self.fullpath.split('/')[-1]} to {self.fullpath}")
-                return True
-            else:
-                print("Download file stopped, the client didnt authorized")
-                return False
+            print(f"Downloaded: {self.fullpath.split('/')[-1]} to {self.fullpath}")
+            return True
         except requests.exceptions.RequestException as e:
             print(f"Error downloading file: {e}")
             return False

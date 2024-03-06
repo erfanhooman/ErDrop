@@ -15,9 +15,9 @@ from sender.sending_file_implementations.SendingFIle import ServerImplementation
 class FileServer(resource.Resource):
     isLeaf = True
 
-    def __init__(self, file_path, progress_bar):
+    def __init__(self, file_path, ui):
         self.file_path = file_path
-        self.progress_bar = progress_bar
+        self.ui = ui
 
     def render_GET(self, request):
         file_path = os.path.join(self.file_path)
@@ -28,7 +28,7 @@ class FileServer(resource.Resource):
 
             def send_chunk(data):
                 request.write(data)
-                self.progress_bar.setValue(self.progress_bar.value() + len(data))
+                self.ui.progress_bar.setValue(self.ui.progress_bar.value() + len(data))
                 reactor.callLater(0, read_and_send)
 
             def finish_request(_):
@@ -48,8 +48,9 @@ class FileServer(resource.Resource):
 
             total_size = os.path.getsize(file_path)
 
-            self.progress_bar.setMaximum(total_size)
-            self.progress_bar.setValue(0)
+            self.ui.download_mode()
+            self.ui.progress_bar.setMaximum(total_size)
+            self.ui.progress_bar.setValue(0)
 
             read_and_send()
             return server.NOT_DONE_YET
@@ -60,8 +61,9 @@ class FileServer(resource.Resource):
 
 
 class DefaultSendingFileImplementation(ServerImplementationBase):
-    def __init__(self, file_path, send_port, filename, ui):
-        self.progress_bar = ui
+    def __init__(self, file_path, send_port, filename, ui, name):
+        self.sender_name = name
+        self.ui = ui
         self.file_name = filename
         self.temp_dir = None
         self.send_port = send_port
@@ -87,15 +89,11 @@ class DefaultSendingFileImplementation(ServerImplementationBase):
         cert.set_pubkey(private_key)
         cert.sign(private_key, "sha256")
 
-        site = server.Site(FileServer(file_path=filepath, progress_bar=self.progress_bar))
+        site = server.Site(FileServer(file_path=filepath, ui=self.ui))
         cert_options = ssl.CertificateOptions(privateKey=private_key, certificate=cert)
 
         reactor.listenSSL(port, site, cert_options, interface='0.0.0.0')
         reactor.run(installSignalHandlers=False)
-
-    def stop_server(self):
-        reactor.stop()
-        sys.exit()
 
     def connect_and_send(self, receiver, receiver_port, host):
         sender_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -103,16 +101,27 @@ class DefaultSendingFileImplementation(ServerImplementationBase):
         try:
             sender_socket.connect((receiver['ip'], receiver_port))
             authentication_token = secrets.token_urlsafe(16)
-            url = f"https://{host}:{self.send_port}|{self.file_name}"
+            url = f"https://{host}:{self.send_port}|{self.file_name}|{self.sender_name}"
             sender_socket.send(url.encode('utf-8'))
             status = sender_socket.recv(1024).decode('utf-8')
             if status == "1":
-                print("file sent Successfully")
+                print("the window closed1")
+                sender_socket.close()
+                print("the window closed2")
+                self.stop_server()
+
+            elif status == "0":
                 sender_socket.close()
                 self.stop_server()
+                self.ui.close_window()
 
         except ValueError as ce:
             print(f"Connection Error connecting to the server: {ce}")
             sender_socket.close()
             self.stop_server()
             sys.exit()
+
+    def stop_server(self):
+        reactor.stop()
+        self.ui.close_window()
+        sys.exit()

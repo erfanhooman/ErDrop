@@ -1,10 +1,9 @@
+import sys
 import threading
 
 from sender.userInter_faces.BaseGUI import UIHandlerBase
 from PyQt6 import QtWidgets as Q
 from PyQt6.QtCore import QTimer
-
-progress = None
 
 
 class QtUIHandler:
@@ -16,20 +15,23 @@ class QtUIHandler:
 
     def setupUI(self):
         receivers_list_window = ReceiversListWindow()
-        progress_bar = progress
-
-        sender = SenderTest(self.parent, self.Sender, receivers_list_window, self.port, progress_bar)
+        sender = SenderTest(self.parent, self.Sender, receivers_list_window, self.port)
         sender.show_receivers_list(receivers_list_window)
 
 
 class SenderTest(UIHandlerBase):
-    def __init__(self, parent, Sender, receivers_list_window, port, ui):
+    def __init__(self, parent, Sender, receivers_list_window, port):
         self.port = port
         self.parent = parent
 
-        path, name = self.choose_file()
+        out = self.choose_file()
+        if out is not None:
+            path, name = out
+        else:
+            sys.exit()
+
         if path and name:
-            self.sender = Sender(path, name, ui)
+            self.sender = Sender(path, name, receivers_list_window)
 
             self.timer = QTimer(self.parent)
             self.timer.timeout.connect(lambda: self.window_refresh(receivers_list_window.list_widget))
@@ -70,10 +72,8 @@ class SenderTest(UIHandlerBase):
 
     def select_and_send(self, item):
         receiver_name = item.text()
-        print("select and now going to send")
         func = threading.Thread(target=self.sender.connect_to_receiver, args=(self.sender.receivers[receiver_name], self.port))
         func.start()
-        # self.sender.end_discovering()
 
 
 class ReceiversListWindow(Q.QWidget):
@@ -84,8 +84,18 @@ class ReceiversListWindow(Q.QWidget):
         self.setGeometry(500, 200, 300, 400)
         self.list_widget = Q.QListWidget(self)
         self.progress_bar = Q.QProgressBar()
+        self.progress_bar.hide()
         layout = Q.QVBoxLayout(self)
         layout.addWidget(self.list_widget)
         layout.addWidget(self.progress_bar)
-        global progress
-        progress = self.progress_bar
+
+    def download_mode(self):
+        self.list_widget.hide()
+        self.setFixedHeight(200)
+        self.setFixedWidth(500)
+        self.progress_bar.show()
+
+    def close_window(self):
+        print("closed the window ")
+        self.destroy()
+        sys.exit()
