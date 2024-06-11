@@ -5,6 +5,7 @@ from receiver.receiver import Receiver
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QDialog, QLabel
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
