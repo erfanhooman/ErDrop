@@ -18,7 +18,7 @@ class Configuration:
             script_directory = os.path.dirname(os.path.abspath(__file__))
 
         # config_file_path = os.path.join(script_directory, self.filename)
-        config_file_path = '/home/erfan/Desktop/Project/ErDrop/Config.yaml'
+        config_file_path = '/home/erfan/Desktop/Projects/ErDrop/Config.yaml'
 
         try:
             with open(config_file_path, 'r') as file:

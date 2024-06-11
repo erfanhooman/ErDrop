@@ -3,5 +3,3 @@ Config.yaml
 *.pyc
 __pycache__
 .idea
-exe.dist
-exe.build
