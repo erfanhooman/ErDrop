@@ -3,6 +3,7 @@ import yaml
 import time
 import socket
 import random
+import sys
 
 
 class Configuration:
@@ -11,11 +12,16 @@ class Configuration:
         self.filename = filename
 
     def configure(self):
-        script_directory = os.path.dirname(os.path.abspath(__file__))
-        self.filename = os.path.join(script_directory, self.filename)
+        if getattr(sys, 'frozen', False):
+            script_directory = sys._MEIPASS
+        else:
+            script_directory = os.path.dirname(os.path.abspath(__file__))
+
+        # config_file_path = os.path.join(script_directory, self.filename)
+        config_file_path = '/home/erfan/Desktop/Project/ErDrop/Config.yaml'
 
         try:
-            with open(self.filename, 'r') as file:
+            with open(config_file_path, 'r') as file:
                 config = yaml.load(file, Loader=yaml.FullLoader)
         except FileNotFoundError:
             a = input("file not found, do you want to create the default config file(y/n)")
